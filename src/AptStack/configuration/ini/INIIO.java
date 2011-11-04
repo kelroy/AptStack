@@ -6,14 +6,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import AptStack.configuration.Setting;
+import AptStack.configuration.SettingLinkedList;
 import AptStack.exceptions.configuration.*;
 
 public class INIIO{
 	
-	File file;
-	
-	FileLine lines;
-	FileLine header;
+	private File file;
+	private FileLine lines;
+	private FileLine header;
+	private SettingLinkedList settings;
 	
 	public INIIO(String fileName) throws ErrorReadingINIFileException{
 		this.file = new File(fileName);
@@ -53,22 +56,48 @@ public class INIIO{
 			BufferedReader inputStream = new BufferedReader(new FileReader(this.file));
 			String inputLine;
 			
-			while((inputLine = inputStream.readLine())!= null){
-				System.out.println(inputLine);
-				if(inputLine != null)if(inputLine.charAt(0) != '#')pointer.line = inputLine;
-				pointer.nextLine = new FileLine();
-				pointer = pointer.nextLine;
+			while((inputLine = inputStream.readLine()) != null){
+				if(!inputLine.isEmpty()){
+					if(inputLine.charAt(0) != '#'){
+						pointer.line = inputLine;
+						pointer.nextLine = new FileLine();
+						pointer = pointer.nextLine;
+					}
+				}
 			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
-		pointer = this.lines;
 		
-		while(pointer.line != null){
-			System.out.println(pointer.line);
-			pointer = pointer.nextLine;
+		System.out.println("ja");
+		
+		this.parse();
+	}
+	
+	private void parse(){
+		FileLine fileLinePointer = this.lines;
+		SettingLinkedList settingPointer = this.settings;
+		
+		while(fileLinePointer.line != null){
+			settingPointer = new SettingLinkedList();
+			settingPointer.setSetting(new Setting());
+				
+				//is a header
+				if(fileLinePointer.line.trim().lastIndexOf(":")-1 == fileLinePointer.line.trim().length()){
+					settingPointer.getSetting().setTag("header");
+					settingPointer.getSetting().setValue(fileLinePointer.line.split(":")[0]);
+				}
+				
+			System.out.println(fileLinePointer.line.split(":").length);
+			
+			fileLinePointer = fileLinePointer.nextLine;
 		}
+		
+		
+	}
+	
+	private void writeSettings(SettingLinkedList settings){
 		
 	}
 	
@@ -110,6 +139,10 @@ public class INIIO{
 			this.line = line;
 		}
 		
+	}
+	
+	public SettingLinkedList getSettings(){
+		return this.settings;
 	}
 	
 	
