@@ -1,7 +1,9 @@
 package AptStack.configuration.ini;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import AptStack.exceptions.configuration.*;
@@ -44,6 +46,29 @@ public class INIIO{
 	}
 	
 	private void loadFile(){
+		FileLine pointer = new FileLine();
+		this.lines = pointer;
+		
+		try{
+			BufferedReader inputStream = new BufferedReader(new FileReader(this.file));
+			String inputLine;
+			
+			while((inputLine = inputStream.readLine())!= null){
+				System.out.println(inputLine);
+				if(inputLine != null)if(inputLine.charAt(0) != '#')pointer.line = inputLine;
+				pointer.nextLine = new FileLine();
+				pointer = pointer.nextLine;
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		pointer = this.lines;
+		
+		while(pointer.line != null){
+			System.out.println(pointer.line);
+			pointer = pointer.nextLine;
+		}
 		
 	}
 	
