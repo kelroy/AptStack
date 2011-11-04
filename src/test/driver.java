@@ -1,6 +1,6 @@
 package test;
 
-import AptStack.configuration.INIIO;
+import AptStack.configuration.ini.INIIO;
 import AptStack.exceptions.configuration.ErrorReadingINIFileException;
 
 public class driver {
